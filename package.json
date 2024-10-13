@@ -20,5 +20,11 @@
     "webpack": "^5.95.0",
     "webpack-cli": "^4.10.0",
     "webpack-merge": "^5.10.0"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.5",
+    "@langchain/core": "^0.3.10",
+    "@langchain/langgraph": "^0.2.14",
+    "@langchain/ollama": "^0.1.0"
   }
 }
