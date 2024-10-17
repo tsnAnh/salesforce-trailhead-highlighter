@@ -93,11 +93,9 @@ After configuring the `agent.js` file, you need to build the extension before lo
 
 ## Usage
 
-1. Navigate to a Salesforce Trailhead course page.
+1. Navigate to a Salesforce Trailhead course page e.g [Enhance Copilot to Act on Data with Conversational Language](https://trailhead.salesforce.com/content/learn/projects/connect-data-cloud-to-copilot-and-prompt-builder/enhance-copilot-to-act-on-data-with-conversational-language?trail_id=build-ai-assistants-with-einstein-copilot)
 
-2. Click the extension icon in the Chrome toolbar to activate it.
-
-3. The extension will automatically analyze the content and highlight important sentences based on key definitions, instructions, and best practices.
+2. The extension will automatically analyze the content and highlight important sentences based on key definitions, instructions, and best practices.
 
 ## Contributing
 
