@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Extension",
+  "name": "Trailhead Learning Highlighter Assistant",
   "version": "0.1.0",
-  "description": "My Chrome Extension",
+  "description": "Trailhead learning highlighter assistant",
   "icons": {
-    "16": "icons/icon_16.png",
-    "32": "icons/icon_32.png",
-    "48": "icons/icon_48.png",
-    "128": "icons/icon_128.png"
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "background": {
     "service_worker": "background.js"
@@ -20,7 +20,7 @@
   "host_permissions": ["http://localhost/*"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://trailhead.salesforce.com/content/learn/*"],
       "run_at": "document_idle",
       "js": ["contentScript.js"]
     }

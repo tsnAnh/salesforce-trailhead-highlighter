@@ -1,4 +1,4 @@
-const { getKeySentences } = require("./agent");
+import { getKeySentences } from './agent';
 
 let highlightingEnabled = true;
 let highlightOverlays = [];
@@ -18,7 +18,7 @@ async function highlightImportantText(force = false) {
 
   removeHighlights(); // Clear existing highlights
 
-  const pageContent = document.body.innerText;
+  const pageContent = document.getElementsByClassName('unit-content')[0].innerText;
   try {
     const sentencesToHighlight = await getSentencesToHighlight(pageContent);
     highlightSentences(sentencesToHighlight);
@@ -29,7 +29,11 @@ async function highlightImportantText(force = false) {
 }
 
 async function getSentencesToHighlight(pageContent) {
-  return await getKeySentences(pageContent)
+  try {
+    return await getKeySentences(pageContent);
+  } catch (e) {
+    return [];
+  }
 }
 
 function highlightSentences(sentences) {
@@ -43,56 +47,56 @@ function highlightSentences(sentences) {
 function getAllTextNodes(node) {
   const allNodes = [];
   if (node.nodeType === Node.TEXT_NODE) {
-      allNodes.push(node);
+    allNodes.push(node);
   } else {
-      for (let childNode of node.childNodes) {
-          allNodes.push(...getAllTextNodes(childNode));
-      }
+    for (let childNode of node.childNodes) {
+      allNodes.push(...getAllTextNodes(childNode));
+    }
   }
   return allNodes;
 }
 
 function findSentenceInTextNodes(textNodes, sentence) {
-    const ranges = [];
-    const lowerSentence = sentence.toLowerCase();
-    let sentenceIndex = 0;
-    let currentRange = null;
+  const ranges = [];
+  const lowerSentence = sentence.toLowerCase();
+  let sentenceIndex = 0;
+  let currentRange = null;
 
-    for (let nodeIndex = 0; nodeIndex < textNodes.length; nodeIndex++) {
-        const node = textNodes[nodeIndex];
-        const nodeText = node.textContent.toLowerCase();
-        let textIndex = 0;
+  for (let nodeIndex = 0; nodeIndex < textNodes.length; nodeIndex++) {
+    const node = textNodes[nodeIndex];
+    const nodeText = node.textContent.toLowerCase();
+    let textIndex = 0;
 
-        while (textIndex < nodeText.length) {
-            if (nodeText[textIndex] === lowerSentence[sentenceIndex]) {
-                if (!currentRange) {
-                    currentRange = document.createRange();
-                    currentRange.setStart(node, textIndex);
-                }
-                sentenceIndex++;
-
-                if (sentenceIndex === lowerSentence.length) {
-                    currentRange.setEnd(node, textIndex + 1);
-                    ranges.push(currentRange);
-                    currentRange = null;
-                    sentenceIndex = 0;
-                    // Don't increment textIndex here to allow overlapping matches
-                } else {
-                    textIndex++;
-                }
-            } else {
-                if (currentRange) {
-                    currentRange = null;
-                    sentenceIndex = 0;
-                    // Don't increment textIndex here to allow for immediate re-matching
-                } else {
-                    textIndex++;
-                }
-            }
+    while (textIndex < nodeText.length) {
+      if (nodeText[textIndex] === lowerSentence[sentenceIndex]) {
+        if (!currentRange) {
+          currentRange = document.createRange();
+          currentRange.setStart(node, textIndex);
         }
-    }
+        sentenceIndex++;
 
-    return ranges;
+        if (sentenceIndex === lowerSentence.length) {
+          currentRange.setEnd(node, textIndex + 1);
+          ranges.push(currentRange);
+          currentRange = null;
+          sentenceIndex = 0;
+          // Don't increment textIndex here to allow overlapping matches
+        } else {
+          textIndex++;
+        }
+      } else {
+        if (currentRange) {
+          currentRange = null;
+          sentenceIndex = 0;
+          // Don't increment textIndex here to allow for immediate re-matching
+        } else {
+          textIndex++;
+        }
+      }
+    }
+  }
+
+  return ranges;
 }
 
 function highlightRange(range) {
@@ -144,11 +148,11 @@ function toggleHighlight() {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('Message received:', request);
   if (request.action === 'toggleHighlight') {
-    toggleHighlight().then((result) => sendResponse(result));
+    const result = toggleHighlight();
+    sendResponse(result);
   } else if (request.action === 'refreshHighlights') {
-    highlightImportantText(true).then(() =>
-      sendResponse('Highlights refreshed')
-    );
+    highlightImportantText(true);
+    sendResponse('Highlights refreshed');
   }
   return true; // Indicates that the response is sent asynchronously
 });

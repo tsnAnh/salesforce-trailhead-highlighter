@@ -1,23 +1,36 @@
 const { JsonOutputParser } = require('@langchain/core/output_parsers');
 const { ChatPromptTemplate } = require('@langchain/core/prompts');
-const { Ollama } = require('@langchain/ollama');
+const { ChatGroq } = require('@langchain/groq');
 
-const agentModel = new Ollama({
+const agentModel = new ChatGroq({
   temperature: 0,
-  model: 'llama3.1',
+  model: 'YOUR_MODEL_CHOICE',
+  apiKey: 'YOUR_API_KEY'
 });
 
 const promptTemplate = ChatPromptTemplate.fromTemplate(`
-You are an expert in Salesforce and educational content analysis. 
-Your task is to extract the most important sentences from the following Salesforce Trailhead course content. 
-Identify main topic for the content.
-These key sentences should be the ones that best help readers understand the core concepts and main points of the course.
-Output ONLY the extracted key sentences, without any introductory phrases, explanations, or conclusions.
-Respond with a valid JSON array, containing list of sentence strings.
-DO NOT include any introduction like: "Here is the extracted key sentence array in JSON format:" in the response.
+You are given the text of a Salesforce Trailhead course. Your task is to identify the most important sentences from the course content that convey key concepts, important instructions, or definitions. These sentences should represent the core information that someone would need to understand or remember from the course. 
 
-Trailhead Course Content:
+Please return the important sentences in the form of a JSON array. **Do not alter, paraphrase, or modify the original sentences in any way.** Each entry in the array should be a single sentence, exactly as it appears in the input text.
+
+Here are some guidelines to determine if a sentence is important:
+- It provides a key definition, concept, or term.
+- It contains actionable instructions or steps in a process.
+- It summarizes or emphasizes important information.
+- It highlights best practices or warnings.
+
+### Input:
 {pageContent}
+
+### Output format:
+\`\`\`json
+[
+    "Important sentence 1.",
+    "Important sentence 2.",
+    "Important sentence 3.",
+    "...",
+]
+\`\`\`
 `);
 
 const getKeySentences = async (pageContent) => {
